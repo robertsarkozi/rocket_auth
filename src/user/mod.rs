@@ -16,6 +16,7 @@ pub fn rand_string(size: usize) -> String {
 
 impl Users {
     fn is_auth(&self, session: &Session) -> bool {
+        self.sess.clear_expired().expect("Rocket Auth: clearing expired sessions failed!");
         let option = self.sess.get(session.id);
         if let Some(auth_key) = option {
             auth_key == session.auth_key

@@ -27,7 +27,7 @@ impl SessionManager for CHashMap<i32, AuthKey> {
     #[throws(Error)]
     fn insert_for(&self, id: i32, key: String, time: Duration) {
         let key = AuthKey {
-            expires: time.as_secs() as i64,
+            expires: now() + time.as_secs() as i64,
             secret: key,
         };
         self.insert(id, key);
@@ -39,4 +39,3 @@ impl SessionManager for CHashMap<i32, AuthKey> {
         self.retain(|_, auth_key| auth_key.expires > time);
     }
 }
-
