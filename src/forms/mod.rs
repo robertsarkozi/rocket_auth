@@ -15,7 +15,6 @@ pub struct Signup {
     pub email: String,
 
     #[validate(length(min = 8), custom(function = "validate_pass"))]
-    #[serde(rename = "password")]
     pub(crate) password: String,
 }
 
