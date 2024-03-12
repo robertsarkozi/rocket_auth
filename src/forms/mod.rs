@@ -1,6 +1,5 @@
 use crate::prelude::*;
 
-
 /// The `Login` form is used along with the [`Auth`] guard to authenticate users.
 #[derive(FromForm, Deserialize, Clone, Hash, PartialEq, Eq, Validate)]
 pub struct Login {
@@ -14,14 +13,12 @@ pub struct Login {
 pub struct Signup {
     #[validate(email)]
     pub email: String,
-    #[validate(
-        custom = "is_long",
-        custom = "has_number",
-        custom = "has_lowercase",
-        custom = "has_uppercase"
-    )]
+
+    #[validate(length(min = 8), custom(function = "validate_pass"))]
+    #[serde(rename = "password")]
     pub(crate) password: String,
 }
+
 impl Debug for Signup {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -73,6 +70,14 @@ pub(crate) fn is_secure(password: &str) {
     has_uppercase(password)?;
     has_lowercase(password)?;
     has_number(password)?;
+}
+
+#[throws(ValidationError)]
+fn validate_pass(password: &str) {
+    is_long(password)?;
+    has_number(password)?;
+    has_lowercase(password)?;
+    has_uppercase(password)?;
 }
 
 #[throws(ValidationError)]

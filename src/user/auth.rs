@@ -7,6 +7,7 @@ use rocket::Request;
 use rocket::State;
 use serde_json::json;
 use std::time::Duration;
+use validator::ValidateEmail;
 
 /// The [`Auth`] guard allows to log in, log out, sign up, modify, and delete the currently (un)authenticated user.
 /// For more information see [`Auth`].
@@ -275,7 +276,7 @@ impl<'a> Auth<'a> {
     #[throws(Error)]
     pub async fn change_email(&self, email: String) {
         if self.is_auth() {
-            if !validator::validate_email(&email) {
+            if !email.as_str().as_email_string().is_some() {
                 throw!(Error::InvalidEmailAddressError)
             }
             let session = self.get_session()?;

@@ -4,6 +4,7 @@ use super::rand_string;
 use crate::prelude::*;
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome, Request};
+use validator::ValidateEmail;
 
 impl User {
     /// This method allows to reset the password of a user.
@@ -85,7 +86,7 @@ impl User {
     /// ```
     #[throws(Error)]
     pub fn set_email(&mut self, email: &str) {
-        if validator::validate_email(email) {
+        if email.as_email_string().is_some() {
             self.email = email.to_lowercase();
         } else {
             throw!(Error::InvalidEmailAddressError)
